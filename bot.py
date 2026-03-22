@@ -57,9 +57,9 @@ async def send_log(guild, member, reason, duration_min):
         embed.add_field(name="`Punished user:`", value=f"{member.mention} ({member.id})", inline=False)
         embed.add_field(name="`Motive:`", value=reason, inline=False)
         embed.add_field(name="`Time:`", value=f"{duration_min} minutos", inline=False)
-        embed.add_footer(text="Drakion Auto Mod © | All Rights Reserved.", icon_url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048") 
-        embed.add_image(url="https://cdn.discordapp.com/attachments/1482181421341872259/1482192202976202783/output.png") 
-        embed.add_thumbnail(url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048")
+        embed.set_footer(text="Drakion Auto Mod © | All Rights Reserved.", icon_url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048") 
+        embed.set_image(url="https://cdn.discordapp.com/attachments/1482181421341872259/1482192202976202783/output.png") 
+        embed.set_thumbnail(url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048")
 
         await channel.send(embed=embed)
 
@@ -77,9 +77,9 @@ async def send_punish_log(ctx, user, tipo, motivo):
     embed.add_field(name="`Type:`", value=tipo, inline=False)
     embed.add_field(name="`Staff:`", value=ctx.author.mention, inline=False)
     embed.add_field(name="`Motive:`", value=motivo or "Not informed", inline=False)
-    embed.add_footer(text="Drakion Auto Mod © | All Rights Reserved.", icon_url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048") 
-    embed.add_image(url="https://cdn.discordapp.com/attachments/1482181421341872259/1482192202976202783/output.png") 
-    embed.add_thumbnail(url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048")
+    embed.set_footer(text="Drakion Auto Mod © | All Rights Reserved.", icon_url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048") 
+    embed.set_image(url="https://cdn.discordapp.com/attachments/1482181421341872259/1482192202976202783/output.png") 
+    embed.set_thumbnail(url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048")
 
     await channel.send(embed=embed)
 
@@ -88,9 +88,9 @@ async def send_dm(user, tipo, motivo, tempo=None):
     embed = discord.Embed(title="⚠️ You have been punished", color=discord.Color.orange())
     embed.add_field(name="`Type:`", value=tipo, inline=False)
     embed.add_field(name="`Motivo:`", value=motivo or "Not informed", inline=False)
-    embed.add_footer(text="Drakion Auto Mod © | All Rights Reserved.", icon_url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048") 
-    embed.add_image(url="https://cdn.discordapp.com/attachments/1482181421341872259/1482192202976202783/output.png") 
-    embed.add_thumbnail(url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048")
+    embed.set_footer(text="Drakion Auto Mod © | All Rights Reserved.", icon_url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048") 
+    embed.set_image(url="https://cdn.discordapp.com/attachments/1482181421341872259/1482192202976202783/output.png") 
+    embed.set_thumbnail(url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048")
 
     if tempo:
         embed.add_field(name="Duração", value=tempo, inline=False)
