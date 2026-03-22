@@ -129,7 +129,7 @@ async def on_message(message):
         await message.delete()
         duration = datetime.timedelta(minutes=1)
         await message.author.timeout(duration)
-        await send_log(message.guild, message.author, "Palavrão", 1)
+        await send_log(message.guild, message.author, "swear word", 1)
         return
 
     # ================= SPAM =================
