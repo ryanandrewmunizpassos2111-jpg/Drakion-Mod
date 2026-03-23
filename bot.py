@@ -164,6 +164,17 @@ def parse_motivo_tempo(texto, tempo_padrao=5):
         motivo = texto
 
     return motivo, tempo
+# ================= FUNÇÃO SUCESSO =================
+async def send_success(ctx, msg_text):
+    embed = discord.Embed(
+        description=f"✅ {msg_text}",
+        color=discord.Color.green()
+    )
+    msg = await ctx.send(embed=embed)
+    await asyncio.sleep(5)
+    await msg.delete()
+
+
 # ================= ERROS =================
 @bot.event
 async def on_command_error(ctx, error):
@@ -173,21 +184,18 @@ async def on_command_error(ctx, error):
             description="❌ Você não tem permissão para usar este comando.",
             color=discord.Color.red()
         )
-        await ctx.send(embed=embed)
 
     elif isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed(
             description=f"❌ Está faltando argumento: `{error.param.name}`",
             color=discord.Color.red()
         )
-        await ctx.send(embed=embed)
 
     elif isinstance(error, commands.BadArgument):
         embed = discord.Embed(
             description="❌ Usuário inválido ou argumento incorreto.",
             color=discord.Color.red()
         )
-        await ctx.send(embed=embed)
 
     elif isinstance(error, commands.CommandNotFound):
         return
@@ -197,8 +205,12 @@ async def on_command_error(ctx, error):
             description="❌ Ocorreu um erro ao executar o comando.",
             color=discord.Color.red()
         )
-        await ctx.send(embed=embed)
         print(error)
+
+    msg = await ctx.send(embed=embed)
+    await asyncio.sleep(5)
+    await msg.delete()
+
 
 # ================= COMANDOS =================
 
@@ -312,5 +324,5 @@ async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
 
     await send_success(ctx, "Canal destrancado com sucesso.")
-
+    
 bot.run(TOKEN)
