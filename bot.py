@@ -151,7 +151,19 @@ async def on_message(message):
         spam_control[user_id] = ["", 0]
 
     await bot.process_commands(message)
+    
+# ================= PARSER MOTIVO + TEMPO =================
+def parse_motivo_tempo(texto, tempo_padrao=5):
+    partes = texto.split()
 
+    if len(partes) > 1 and partes[-1].isdigit():
+        tempo = int(partes[-1])
+        motivo = " ".join(partes[:-1])
+    else:
+        tempo = tempo_padrao
+        motivo = texto
+
+    return motivo, tempo
 # ================= ERROS =================
 @bot.event
 async def on_command_error(ctx, error):
@@ -200,24 +212,33 @@ async def warn(ctx, member: discord.Member, *, motivo):
     await send_punish_log(ctx, member, f"Warn ({warns[member.id]}/3)", motivo)
     await send_dm(member, "Warning", motivo)
 
+    await send_success(ctx, f"Warn aplicado em {member.mention}.")
+
     if warns[member.id] >= 3:
         await member.timeout(datetime.timedelta(hours=2))
         await send_punish_log(ctx, member, "Auto Mute (2h)", "3 warns")
         await send_dm(member, "Muted", "3 warns", "2 hours")
+
+        await send_success(ctx, f"{member.mention} foi mutado automaticamente (3 warns).")
+
         warns[member.id] = 0
 
 
 @bot.command()
-async def mute(ctx, member: discord.Member, tempo: int = 5, *, motivo=None):
+async def mute(ctx, member: discord.Member, *, texto):
     if not can_warn(ctx.author):
         raise commands.CheckFailure()
 
-    if motivo is None:
-        raise commands.MissingRequiredArgument(ctx.command.params['motivo'])
+    motivo, tempo = parse_motivo_tempo(texto)
+
+    if not motivo:
+        raise commands.MissingRequiredArgument(ctx.command.params['texto'])
 
     await member.timeout(datetime.timedelta(minutes=tempo))
     await send_punish_log(ctx, member, f"Mute ({tempo} min)", motivo)
     await send_dm(member, "Muted", motivo, f"{tempo} minutes")
+
+    await send_success(ctx, f"Mute aplicado em {member.mention} ({tempo} min). Veja o canal de logs.")
 
 
 @bot.command()
@@ -228,6 +249,8 @@ async def kick(ctx, member: discord.Member, *, motivo):
     await member.kick()
     await send_punish_log(ctx, member, "Kick", motivo)
 
+    await send_success(ctx, f"{member.mention} foi kickado com sucesso.")
+
 
 @bot.command()
 async def ban(ctx, member: discord.Member, *, motivo):
@@ -237,14 +260,23 @@ async def ban(ctx, member: discord.Member, *, motivo):
     await member.ban()
     await send_punish_log(ctx, member, "Ban", motivo)
 
+    await send_success(ctx, f"{member.mention} foi banido com sucesso.")
+
 
 @bot.command()
-async def tempban(ctx, member: discord.Member, tempo: int, *, motivo):
+async def tempban(ctx, member: discord.Member, *, texto):
     if not can_punish(ctx.author):
         raise commands.CheckFailure()
 
+    motivo, tempo = parse_motivo_tempo(texto)
+
+    if not motivo:
+        raise commands.MissingRequiredArgument(ctx.command.params['texto'])
+
     await member.ban()
     await send_punish_log(ctx, member, f"TempBan ({tempo} min)", motivo)
+
+    await send_success(ctx, f"{member.mention} foi banido por {tempo} minutos.")
 
     await asyncio.sleep(tempo * 60)
     await ctx.guild.unban(member)
@@ -259,6 +291,8 @@ async def softban(ctx, member: discord.Member, *, motivo):
     await member.unban()
     await send_punish_log(ctx, member, "SoftBan", motivo)
 
+    await send_success(ctx, f"{member.mention} levou softban com sucesso.")
+
 
 @bot.command()
 async def lock(ctx):
@@ -267,6 +301,8 @@ async def lock(ctx):
 
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
 
+    await send_success(ctx, "Canal trancado com sucesso.")
+
 
 @bot.command()
 async def unlock(ctx):
@@ -274,5 +310,7 @@ async def unlock(ctx):
         raise commands.CheckFailure()
 
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
+
+    await send_success(ctx, "Canal destrancado com sucesso.")
 
 bot.run(TOKEN)
