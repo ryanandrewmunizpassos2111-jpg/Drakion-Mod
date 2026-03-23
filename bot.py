@@ -237,11 +237,11 @@ async def warn(ctx, member: discord.Member, *, motivo):
 
 
 @bot.command()
-async def mute(ctx, member: discord.Member, *, texto):
+async def mute(ctx, member: discord.Member, *, motivo):
     if not can_warn(ctx.author):
         raise commands.CheckFailure()
 
-    motivo, tempo = parse_motivo_tempo(texto)
+    motivo, tempo = parse_motivo_tempo(motivo)
 
     if not motivo:
         raise commands.MissingRequiredArgument(ctx.command.params['texto'])
@@ -276,11 +276,11 @@ async def ban(ctx, member: discord.Member, *, motivo):
 
 
 @bot.command()
-async def tempban(ctx, member: discord.Member, *, texto):
+async def tempban(ctx, member: discord.Member, *, motivo):
     if not can_punish(ctx.author):
         raise commands.CheckFailure()
 
-    motivo, tempo = parse_motivo_tempo(texto)
+    motivo, tempo = parse_motivo_tempo(motivo)
 
     if not motivo:
         raise commands.MissingRequiredArgument(ctx.command.params['texto'])
