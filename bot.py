@@ -64,7 +64,7 @@ async def send_log(guild, member, reason, duration_min):
         await channel.send(embed=embed)
 
 # ================= LOG NOVO =================
-async def send_punish_log(ctx, user, tipo, motivo):
+async def send_punish_log(ctx, user, tipo, motive):
     channel = bot.get_channel(PUNISH_LOG_CHANNEL)
 
     embed = discord.Embed(
@@ -76,7 +76,7 @@ async def send_punish_log(ctx, user, tipo, motivo):
     embed.add_field(name="`User:`", value=f"{user.mention} ({user.id})", inline=False)
     embed.add_field(name="`Type:`", value=tipo, inline=False)
     embed.add_field(name="`Staff:`", value=ctx.author.mention, inline=False)
-    embed.add_field(name="`Motive:`", value=motivo or "Not informed", inline=False)
+    embed.add_field(name="`Motive:`", value=motive or "Not informed", inline=False)
     embed.set_footer(text="Drakion Auto Mod © | All Rights Reserved.", icon_url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048") 
     embed.set_image(url="https://cdn.discordapp.com/attachments/1482181421341872259/1482192202976202783/output.png") 
     embed.set_thumbnail(url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048")
@@ -84,10 +84,10 @@ async def send_punish_log(ctx, user, tipo, motivo):
     await channel.send(embed=embed)
 
 # ================= DM =================
-async def send_dm(user, tipo, motivo, tempo=None):
+async def send_dm(user, tipo, motive, tempo=None):
     embed = discord.Embed(title="⚠️ You have been punished", color=discord.Color.orange())
     embed.add_field(name="`Type:`", value=tipo, inline=False)
-    embed.add_field(name="`Motivo:`", value=motivo or "Not informed", inline=False)
+    embed.add_field(name="`Motive:`", value=motive or "Not informed", inline=False)
     embed.set_footer(text="Drakion Auto Mod © | All Rights Reserved.", icon_url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048") 
     embed.set_image(url="https://cdn.discordapp.com/attachments/1482181421341872259/1482192202976202783/output.png") 
     embed.set_thumbnail(url="https://cdn.discordapp.com/icons/1481089628374171651/de6d926a6fd65da6b783a0f96e929b49.png?size=2048")
@@ -103,7 +103,7 @@ async def send_dm(user, tipo, motivo, tempo=None):
 # ================= EVENTO =================
 @bot.event
 async def on_ready():
-    print(f'✅ Bot conectado como {bot.user}')
+    print(f'✅ Bot connected as {bot.user}')
 
 @bot.event
 async def on_message(message):
@@ -152,18 +152,18 @@ async def on_message(message):
 
     await bot.process_commands(message)
     
-# ================= PARSER MOTIVO + TEMPO =================
-def parse_motivo_tempo(texto, tempo_padrao=5):
+# ================= PARSER MOTIVE + TEMPO =================
+def parse_motive_tempo(texto, tempo_padrao=5):
     partes = texto.split()
 
     if len(partes) > 1 and partes[-1].isdigit():
         tempo = int(partes[-1])
-        motivo = " ".join(partes[:-1])
+        motive = " ".join(partes[:-1])
     else:
         tempo = tempo_padrao
-        motivo = texto
+        motive = texto
 
-    return motivo, tempo
+    return motive, tempo
 # ================= FUNÇÃO SUCESSO =================
 async def send_success(ctx, msg_text):
     embed = discord.Embed(
@@ -181,19 +181,19 @@ async def on_command_error(ctx, error):
 
     if isinstance(error, commands.CheckFailure):
         embed = discord.Embed(
-            description="❌ Você não tem permissão para usar este comando.",
+            description="❌ You do not have permission to use this command.",
             color=discord.Color.red()
         )
 
     elif isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed(
-            description=f"❌ Está faltando argumento: `{error.param.name}`",
+            description=f"❌ There's a missing argument: `{error.param.name}`",
             color=discord.Color.red()
         )
 
     elif isinstance(error, commands.BadArgument):
         embed = discord.Embed(
-            description="❌ Usuário inválido ou argumento incorreto.",
+            description="❌ Invalid user or incorrect argument.",
             color=discord.Color.red()
         )
 
@@ -202,7 +202,7 @@ async def on_command_error(ctx, error):
 
     else:
         embed = discord.Embed(
-            description="❌ Ocorreu um erro ao executar o comando.",
+            description="❌ An error occurred while executing the command.",
             color=discord.Color.red()
         )
         print(error)
@@ -215,14 +215,14 @@ async def on_command_error(ctx, error):
 # ================= COMANDOS =================
 
 @bot.command()
-async def warn(ctx, member: discord.Member, *, motivo):
+async def warn(ctx, member: discord.Member, *, motive):
     if not can_warn(ctx.author):
         raise commands.CheckFailure()
 
     warns[member.id] = warns.get(member.id, 0) + 1
 
-    await send_punish_log(ctx, member, f"Warn ({warns[member.id]}/3)", motivo)
-    await send_dm(member, "Warning", motivo)
+    await send_punish_log(ctx, member, f"Warn ({warns[member.id]}/3)", motive)
+    await send_dm(member, "Warning", motive)
 
     await send_success(ctx, f"Warn aplicado em {member.mention}.")
 
@@ -231,79 +231,79 @@ async def warn(ctx, member: discord.Member, *, motivo):
         await send_punish_log(ctx, member, "Auto Mute (2h)", "3 warns")
         await send_dm(member, "Muted", "3 warns", "2 hours")
 
-        await send_success(ctx, f"{member.mention} foi mutado automaticamente (3 warns).")
+        await send_success(ctx, f"{member.mention} It was automatically mutated (3 warns).")
 
         warns[member.id] = 0
 
 
 @bot.command()
-async def mute(ctx, member: discord.Member, *, motivo):
+async def mute(ctx, member: discord.Member, *, motive):
     if not can_warn(ctx.author):
         raise commands.CheckFailure()
 
-    motivo, tempo = parse_motivo_tempo(motivo)
+    motive, tempo = parse_motive_tempo(motive)
 
-    if not motivo:
+    if not motive:
         raise commands.MissingRequiredArgument(ctx.command.params['texto'])
 
     await member.timeout(datetime.timedelta(minutes=tempo))
-    await send_punish_log(ctx, member, f"Mute ({tempo} min)", motivo)
-    await send_dm(member, "Muted", motivo, f"{tempo} minutes")
+    await send_punish_log(ctx, member, f"Mute ({tempo} min)", motive)
+    await send_dm(member, "Muted", motive, f"{tempo} minutes")
 
-    await send_success(ctx, f"Mute aplicado em {member.mention} ({tempo} min). Veja o canal de logs.")
+    await send_success(ctx, f"Mute applied to {member.mention} ({tempo} min). See the log channel.")
 
 
 @bot.command()
-async def kick(ctx, member: discord.Member, *, motivo):
+async def kick(ctx, member: discord.Member, *, motive):
     if not can_punish(ctx.author):
         raise commands.CheckFailure()
 
     await member.kick()
-    await send_punish_log(ctx, member, "Kick", motivo)
+    await send_punish_log(ctx, member, "Kick", motive)
 
-    await send_success(ctx, f"{member.mention} foi kickado com sucesso.")
+    await send_success(ctx, f"{member.mention} It was successfully kicked.")
 
 
 @bot.command()
-async def ban(ctx, member: discord.Member, *, motivo):
+async def ban(ctx, member: discord.Member, *, motive):
     if not can_punish(ctx.author):
         raise commands.CheckFailure()
 
     await member.ban()
-    await send_punish_log(ctx, member, "Ban", motivo)
+    await send_punish_log(ctx, member, "Ban", motive)
 
-    await send_success(ctx, f"{member.mention} foi banido com sucesso.")
+    await send_success(ctx, f"{member.mention} It was successfully banned.")
 
 
 @bot.command()
-async def tempban(ctx, member: discord.Member, *, motivo):
+async def tempban(ctx, member: discord.Member, *, motive):
     if not can_punish(ctx.author):
         raise commands.CheckFailure()
 
-    motivo, tempo = parse_motivo_tempo(motivo)
+    motive, tempo = parse_motive_tempo(motive)
 
-    if not motivo:
+    if not motive:
         raise commands.MissingRequiredArgument(ctx.command.params['texto'])
 
     await member.ban()
-    await send_punish_log(ctx, member, f"TempBan ({tempo} min)", motivo)
+    await send_punish_log(ctx, member, f"TempBan ({tempo} min)", motive)
 
-    await send_success(ctx, f"{member.mention} foi banido por {tempo} minutos.")
+    await send_success(ctx, f"{member.mention} was banned for {tempo} minutes.")
 
     await asyncio.sleep(tempo * 60)
     await ctx.guild.unban(member)
 
 
 @bot.command()
-async def softban(ctx, member: discord.Member, *, motivo):
+async def softban(ctx, member: discord.Member, *, motive):
     if not can_punish(ctx.author):
         raise commands.CheckFailure()
 
     await member.ban()
     await member.unban()
-    await send_punish_log(ctx, member, "SoftBan", motivo)
+    await send_punish_log(ctx, member, "SoftBan", motive)
 
-    await send_success(ctx, f"{member.mention} levou softban com sucesso.")
+    await send_success(ctx, f"{member.mention} It was successfully softbanned.")
 
 
 @bot.command()
@@ -313,7 +313,7 @@ async def lock(ctx):
 
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
 
-    await send_success(ctx, "Canal trancado com sucesso.")
+    await send_success(ctx, "Channel successfully locked.")
 
 
 @bot.command()
@@ -323,6 +323,6 @@ async def unlock(ctx):
 
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
 
-    await send_success(ctx, "Canal destrancado com sucesso.")
+    await send_success(ctx, "Channel unlocked successfully.")
     
 bot.run(TOKEN)
