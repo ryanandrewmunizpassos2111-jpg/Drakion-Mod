@@ -152,12 +152,48 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+# ================= ERROS =================
+@bot.event
+async def on_command_error(ctx, error):
+
+    if isinstance(error, commands.CheckFailure):
+        embed = discord.Embed(
+            description="❌ Você não tem permissão para usar este comando.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
+
+    elif isinstance(error, commands.MissingRequiredArgument):
+        embed = discord.Embed(
+            description=f"❌ Está faltando argumento: `{error.param.name}`",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
+
+    elif isinstance(error, commands.BadArgument):
+        embed = discord.Embed(
+            description="❌ Usuário inválido ou argumento incorreto.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
+
+    elif isinstance(error, commands.CommandNotFound):
+        return
+
+    else:
+        embed = discord.Embed(
+            description="❌ Ocorreu um erro ao executar o comando.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
+        print(error)
+
 # ================= COMANDOS =================
 
 @bot.command()
-async def warn(ctx, member: discord.Member, *, motivo=None):
+async def warn(ctx, member: discord.Member, *, motivo):
     if not can_warn(ctx.author):
-        return
+        raise commands.CheckFailure()
 
     warns[member.id] = warns.get(member.id, 0) + 1
 
@@ -170,35 +206,42 @@ async def warn(ctx, member: discord.Member, *, motivo=None):
         await send_dm(member, "Muted", "3 warns", "2 hours")
         warns[member.id] = 0
 
+
 @bot.command()
 async def mute(ctx, member: discord.Member, tempo: int = 5, *, motivo=None):
     if not can_warn(ctx.author):
-        return
+        raise commands.CheckFailure()
+
+    if motivo is None:
+        raise commands.MissingRequiredArgument(ctx.command.params['motivo'])
 
     await member.timeout(datetime.timedelta(minutes=tempo))
     await send_punish_log(ctx, member, f"Mute ({tempo} min)", motivo)
     await send_dm(member, "Muted", motivo, f"{tempo} minutes")
 
+
 @bot.command()
-async def kick(ctx, member: discord.Member, *, motivo=None):
+async def kick(ctx, member: discord.Member, *, motivo):
     if not can_punish(ctx.author):
-        return
+        raise commands.CheckFailure()
 
     await member.kick()
     await send_punish_log(ctx, member, "Kick", motivo)
 
+
 @bot.command()
-async def ban(ctx, member: discord.Member, *, motivo=None):
+async def ban(ctx, member: discord.Member, *, motivo):
     if not can_punish(ctx.author):
-        return
+        raise commands.CheckFailure()
 
     await member.ban()
     await send_punish_log(ctx, member, "Ban", motivo)
 
+
 @bot.command()
-async def tempban(ctx, member: discord.Member, tempo: int, *, motivo=None):
+async def tempban(ctx, member: discord.Member, tempo: int, *, motivo):
     if not can_punish(ctx.author):
-        return
+        raise commands.CheckFailure()
 
     await member.ban()
     await send_punish_log(ctx, member, f"TempBan ({tempo} min)", motivo)
@@ -206,26 +249,29 @@ async def tempban(ctx, member: discord.Member, tempo: int, *, motivo=None):
     await asyncio.sleep(tempo * 60)
     await ctx.guild.unban(member)
 
+
 @bot.command()
-async def softban(ctx, member: discord.Member, *, motivo=None):
+async def softban(ctx, member: discord.Member, *, motivo):
     if not can_punish(ctx.author):
-        return
+        raise commands.CheckFailure()
 
     await member.ban()
     await member.unban()
     await send_punish_log(ctx, member, "SoftBan", motivo)
 
+
 @bot.command()
 async def lock(ctx):
     if not can_punish(ctx.author):
-        return
+        raise commands.CheckFailure()
 
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
+
 
 @bot.command()
 async def unlock(ctx):
     if not can_punish(ctx.author):
-        return
+        raise commands.CheckFailure()
 
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
 
