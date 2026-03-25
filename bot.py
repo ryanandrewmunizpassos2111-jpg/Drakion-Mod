@@ -11,7 +11,7 @@ LOG_CHANNEL_ID = 1484326544871526450
 ALLOWED_ROLES = [1482423776158154953, 1482425821460304144, 1481089914522173520]
 BYPASS_ROLE = 1482423776158154953
 
-BAD_WORDS = ["fdp", "prr", "vtmnc", "caralho", "carai", "puta", "filha da puta", "porra", "vai tomar no cu", "cu", "pinto", "rola"]
+BAD_WORDS = ["fdp", "prr", "vtmnc", "caralho", "carai", "puta", "filha da puta", "porra", "vai tomar no cu"]
 
 # ================= CONFIG NOVA =================
 PUNISH_LOG_CHANNEL = 1482500867696627813
